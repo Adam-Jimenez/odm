@@ -19,6 +19,8 @@ public final class DbSingleton {
 	
 	/**
 	 * fetch a db object using it's name
+	 * use singletonDbs HashMap as cache
+	 * 
 	 * @param dbName The name of the db
 	 * @return DB object for interacting with it
 	 * @throws DbNotFound if it doesn't exist
