@@ -73,7 +73,10 @@ public class Reflector {
 
 	/**
 	 * Guess the name of the getter based on camel case style conventions 
-	 * ex: age yields getAge
+	 * assumes the field was already in camelCase
+	 * TODO: use external library to support other cases
+	 * 
+	 * ex: age yields getAge, but TELEPHONE_NUMBER will fail
 	 * 
 	 * @param fieldName
 	 *            the name of the field
