@@ -2,6 +2,8 @@ package dao.singleton;
 
 import com.mongodb.MongoClient;
 
+import properties.DbPropertiesSingleton;
+
 public final class ClientSingleton {
 	
 	private static MongoClient singletonClient;
@@ -13,11 +15,17 @@ public final class ClientSingleton {
 	public synchronized static MongoClient getClient () {
 		// TODO: get params from properties
 		if (singletonClient == null) {
-			singletonClient = new MongoClient("localhost", 27017); // temp hardcode
+			String address = DbPropertiesSingleton.getMongoAddress();
+			int port = DbPropertiesSingleton.getMongoPort();
+			singletonClient = new MongoClient(address, port); // temp hardcode
 		}
 		return singletonClient;
 	}
 	
+	/**
+	 * There may be issues here if an instance of the client is held somewhere
+	 * outside the singleton and it is closed from here
+	 */
 	public synchronized static void closeClient() {
 		if (singletonClient != null) {
 			singletonClient.close();
@@ -25,8 +33,4 @@ public final class ClientSingleton {
 		}
 	}
 	
-	@Override
-	protected void finalize() throws Throwable {
-		closeClient();
-	}
 }

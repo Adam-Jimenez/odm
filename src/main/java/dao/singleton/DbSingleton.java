@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.mongodb.client.MongoDatabase;
 
 import dao.exceptions.DbNotFound;
+import properties.DbPropertiesSingleton;
 
 public final class DbSingleton {
 	
@@ -32,6 +33,7 @@ public final class DbSingleton {
 			// if not, load using client
 			db = ClientSingleton.getClient().getDatabase(dbName);
 			if (db == null) {
+				// shouldn't happen (because noSQL) but you never know
 				throw new DbNotFound();
 			} else {
 				singletonDbs.put(dbName, db);
@@ -42,10 +44,10 @@ public final class DbSingleton {
 	
 	/**
 	 * Fetch the default db object defined in properties
-	 * TODO: use properties
 	 * @throws DbNotFound if it doesn't exist
 	 */
 	public static MongoDatabase getDefaultDB() throws DbNotFound {
-		return getDB("mongo2");
+		final String defaultDatabase = DbPropertiesSingleton.getDefaultDatabase();
+		return getDB(defaultDatabase);
 	}
 }
