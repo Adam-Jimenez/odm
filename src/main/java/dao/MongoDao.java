@@ -6,9 +6,24 @@ import com.mongodb.client.MongoCollection;
 
 import dao.exceptions.DbNotFound;
 import dao.singleton.DbSingleton;
+import reflection.Reflector;
 
 public class MongoDao {
 
+	public static void store(Object dataObject) {
+		/*
+		 *  get the collection of the same name as the class as the object
+		 *	(we store all instances of the same class in the same collection) 
+		 */
+		try {
+			MongoCollection<Document> collection = DbSingleton.getDefaultDB().getCollection(dataObject.getClass().getCanonicalName());
+			// transform object into document
+			Document document = Reflector.documentFromObject(dataObject);
+			collection.insertOne(document);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void helloMongo() throws DbNotFound{
 		MongoCollection<Document> collection = DbSingleton.getDefaultDB().getCollection("abscsa");
 		Document document = new Document("name", "MongoDB")

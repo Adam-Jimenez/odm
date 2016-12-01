@@ -29,7 +29,6 @@ public class Reflector {
 			String getterName = getGetterNameForFieldName(fieldName);
 			Method getter = getGetter(objectClass, getterName);
 			Object fieldValue = invokeGetter(dataObject, getter);
-			System.out.println(fieldName + ": " + fieldValue);
 			document.append(fieldName, fieldValue);
 		}
 
@@ -73,7 +72,7 @@ public class Reflector {
 	}
 
 	/**
-	 * Guess the name of the getter based on camel case conventions 
+	 * Guess the name of the getter based on camel case style conventions 
 	 * ex: age yields getAge
 	 * 
 	 * @param fieldName
