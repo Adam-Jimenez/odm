@@ -2,9 +2,12 @@ package query;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+
+import com.mongodb.client.MongoCursor;
 
 import reflection.utils.ReflectionUtils;
 
@@ -18,11 +21,14 @@ public class Instantiator {
 	}
 
 	/**
-	 * Create an instance from a document
+	 * Create an object instance from a document
 	 * @param document Document containing object data
 	 * @return New object instance
 	 */
 	public Object instanciateFromDocument(Document document) {
+		if (document == null) {
+			return null;
+		}
 		try {
 			Object newInstance = returnClassType.newInstance();
 			/*
@@ -48,5 +54,15 @@ public class Instantiator {
 			System.err.println(e.getMessage());
 		}
 		return null;
+	}
+	
+	public Object[] instantiateFromDocuments(MongoCursor<Document> cursor) {
+		List<Object> resultingInstances = new ArrayList<Object>();
+		while (cursor.hasNext()) {
+			Document document = cursor.next();
+			Object newInstance = instanciateFromDocument(document);
+			resultingInstances.add(newInstance);
+	    }
+		return resultingInstances.toArray(new Object[resultingInstances.size()]);
 	}
 }

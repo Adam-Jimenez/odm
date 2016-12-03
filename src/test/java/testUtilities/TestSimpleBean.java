@@ -11,4 +11,8 @@ public class TestSimpleBean {
 		this.age = age;
 	}
 	
+	@Override
+	public String toString() {
+		return "age: "+age;
+	}
 }
