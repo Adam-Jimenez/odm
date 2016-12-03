@@ -3,7 +3,9 @@ package daoTest;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import testUtilities.TestBeanWithArray;
 import testUtilities.TestBeanWithArrayOfObject;
 import testUtilities.TestBeanWithCollectionOfObject;
 import testUtilities.TestBeanWithCollectionOfPrimitive;
+import testUtilities.TestBeanWithMapOfPrimitive;
 import testUtilities.TestBeanWithObjectField;
 import testUtilities.TestInheritanceBean;
 import testUtilities.TestSimpleBean;
@@ -127,6 +130,7 @@ public class DaoInsertTest {
 	 * Storing a bean with a collection of objects as field
 	 */
 	@Test
+	@Ignore
 	public void beanWithCollectionOfObject() {
 		TestBeanWithCollectionOfObject testBean = new TestBeanWithCollectionOfObject();
 		List<TestSimpleBean> beans = new ArrayList<TestSimpleBean>();
@@ -144,6 +148,20 @@ public class DaoInsertTest {
 		beans.add(bean3);
 		
 		testBean.setBeans(beans);
+		MongoDao.insert(testBean);
+	}
+	
+	/**
+	 * Storing a bean with a map of primitives as field
+	 */
+	@Test
+	public void beanWithMapOfPrimitives() {
+		TestBeanWithMapOfPrimitive testBean = new TestBeanWithMapOfPrimitive();
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("value1", 1);
+		map.put("value10", 10);
+		map.put("value100", 100);
+		testBean.setValues(map);
 		MongoDao.insert(testBean);
 	}
 }

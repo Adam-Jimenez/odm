@@ -16,12 +16,15 @@ public class MongoDao {
 		 *	(we store all instances of the same class in the same collection) 
 		 */
 		try {
+			// transform object into document 
+			Document document = Reflector.documentFromObject(dataObject);
 			// fetch collection
 			MongoCollection<Document> collection = DbSingleton.getDefaultDB().getCollection(collectionNameFromObjectClass);
-			// transform object into document and insert it
-			Document document = Reflector.documentFromObject(dataObject);
+			// and insert it document in collection
 			collection.insertOne(document);
 		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			System.err.println("=============");
 			e.printStackTrace();
 		}
 	}

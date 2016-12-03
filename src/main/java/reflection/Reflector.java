@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bson.Document;
 
@@ -88,6 +91,34 @@ public class Reflector {
 				} else {
 					document.append(fieldName, documentsFromObjectArray(fieldComponentValues));
 				}
+			} else if (fieldValue instanceof Map<?, ?>) {
+				/*
+				 *  Set of entries
+				 */
+				Set<?> mapEntries =  ((Map<?, ?>)fieldValue).entrySet();
+				Type genericKeyType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];
+				Type genericValueType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[1];
+				Class<?> classOfKey = Class.forName(genericKeyType.getTypeName());
+				Class<?> classOfValue = Class.forName(genericValueType.getTypeName());
+				/*
+				 * The key of the map needs to be a primitive type to be inserted in the db
+				 */
+				if (!ReflectionUtils.isPrimitive(classOfKey)) {
+					throw new Exception("Oups, tried to use object as key for field " + field.getName());
+				}
+				Document mapSubDocument = new Document();
+				for(Object entryObject: mapEntries) {
+					Entry<?, ?> entry = (Entry<?, ?>) entryObject;
+					/*
+					 * Is value is primitive, append directly, else recursive call
+					 */
+					if (ReflectionUtils.isPrimitive(classOfValue)) {
+						mapSubDocument.append(String.valueOf(entry.getKey()), entry.getValue());
+					} else {
+						mapSubDocument.append(String.valueOf(entry.getKey()), documentFromObject(entry.getValue()));
+					}
+				}
+				document.append(fieldName, mapSubDocument);
 			} else {
 				/*
 				 * Unknown field type, apply recursion
