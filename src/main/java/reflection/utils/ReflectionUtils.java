@@ -65,4 +65,42 @@ public class ReflectionUtils {
 		} while (objectClass != null && !isPrimitive(objectClass));
 		return fieldsInObject;
 	}
+	
+	public static boolean isMultidimensionalArray(Object object) {
+		return object.getClass().getComponentType().isArray();
+	}
+	
+	/**
+	 * Iterate all dimensions of array to find if root child is primitive type
+	 * @param object The array
+	 * @return if it contains primitive types
+	 */
+	public static boolean isPrimitiveMultidimensionalArray(Object object) {
+		Class<?> elementClass = object.getClass();
+		while(elementClass.getComponentType() != null) {
+			elementClass = elementClass.getComponentType();
+		}
+		return isPrimitive(elementClass);
+	}
+	
+	/**
+	 * Transforms a multi dimensional array into a multi dimensional list
+	 * @param object The multi dimensional array to transform
+	 * @return Multidimensional List
+	 */
+	public static List<?> multiDimensionalArrayToMultiDimensionalList(Object object) {
+		if(!object.getClass().isArray()) {
+			return new ArrayList<Object>();
+		}
+		List<Object> list = new ArrayList<Object>();
+		Object[] objectArray = (Object[]) object;
+		for(Object childObject : objectArray) {
+			if (!childObject.getClass().isArray()) {
+				list.add(childObject);
+			} else {
+				list.add(multiDimensionalArrayToMultiDimensionalList(childObject));
+			}
+		}
+		return list;
+	}
 }

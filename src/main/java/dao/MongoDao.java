@@ -23,9 +23,9 @@ public class MongoDao {
 			// and insert it document in collection
 			collection.insertOne(document);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			System.err.println("=============");
 			e.printStackTrace();
+			System.err.println("=================================");
+			System.err.println("Error message: " + e.getMessage());
 		}
 	}
 }

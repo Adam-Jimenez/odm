@@ -71,6 +71,16 @@ public class Reflector {
 					 */
 					List<Object> primitiveList = Arrays.asList(fieldComponentValues);
 					document.append(fieldName, primitiveList);
+				/*
+				 * Support for multidimensional arrays
+				 */
+				} else if (ReflectionUtils.isMultidimensionalArray(fieldComponentValues)) {
+					if (ReflectionUtils.isPrimitiveMultidimensionalArray(fieldComponentValues)) {
+						document.append(fieldName, ReflectionUtils.multiDimensionalArrayToMultiDimensionalList(fieldComponentValues));
+					} else {
+						//TODO: test this
+						//document.append(fieldName, documentsFromObjectArray(fieldComponentValues));
+					}
 				} else {
 					/*
 					 * If we have array of unknown type, convert that type to
@@ -107,7 +117,6 @@ public class Reflector {
 				Type genericValueType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[1];
 				Class<?> classOfKey = Class.forName(genericKeyType.getTypeName());
 				Class<?> classOfValue = Class.forName(genericValueType.getTypeName());
-
 				if (!ReflectionUtils.isPrimitive(classOfKey)) {
 					throw new Exception("Oups, tried to use object as key for field " + field.getName());
 				}
@@ -228,5 +237,5 @@ public class Reflector {
 				.append(fieldName.substring(1)).toString();
 		return getterNameForField;
 	}
-
+	
 }
