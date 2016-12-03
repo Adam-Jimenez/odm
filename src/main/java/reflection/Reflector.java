@@ -42,9 +42,9 @@ public class Reflector {
 
 		for (Field field : fieldsInObject) {
 			String fieldName = field.getName();
-			String getterName = getGetterNameForFieldName(fieldName);
-			Method getter = getGetter(objectClass, getterName);
-			Object fieldValue = invokeGetter(dataObject, getter);
+			String getterName = ReflectionUtils.getGetterNameForFieldName(fieldName);
+			Method getter = ReflectionUtils.getGetter(objectClass, getterName);
+			Object fieldValue = ReflectionUtils.invokeMethod(dataObject, getter);
 			if (fieldValue == null) {
 				continue;
 			}
@@ -170,72 +170,8 @@ public class Reflector {
 		return documentsFromObjectArray;
 	}
 
-	/**
-	 * Invokes the given getter method for the given object and returns the
-	 * value
-	 * 
-	 * @param dataObject
-	 *            The object to get from
-	 * @param getter
-	 *            The getter method
-	 * @return The value returned from getter
-	 * @throws Exception
-	 */
-	private static Object invokeGetter(Object dataObject, Method getter) throws Exception {
-		Object fieldValue;
-		fieldValue = getter.invoke(dataObject);
-		return fieldValue;
-	}
+	
 
-	/**
-	 * Gets the getter
-	 * 
-	 * @param objectClass
-	 *            The class we want to fetch the getter from
-	 * @param getterName
-	 * @return The getter method
-	 * @throws Exception
-	 */
-	private static Method getGetter(Class<?> objectClass, String getterName) throws Exception {
-		Method getterMethod = null;
-		try {
-			getterMethod = objectClass.getDeclaredMethod(getterName);
-
-		} catch (NoSuchMethodException e) {
-			/*
-			 * If we didn't find getter in current class, look into superclasses
-			 * (if they exist)
-			 */
-			if (objectClass.getSuperclass() != null) {
-				getterMethod = getGetter(objectClass.getSuperclass(), getterName);
-			} else {
-				System.err.println(
-						"Oups, the getter " + getterName + " isn't set in class " + objectClass.getCanonicalName());
-				throw new Exception(e);
-			}
-		} catch (SecurityException e) {
-			System.err.println(
-					"Oups, the getter " + getterName + " isn't accessible in class " + objectClass.getCanonicalName());
-			throw new Exception(e);
-		}
-		return getterMethod;
-	}
-
-	/**
-	 * Guess the name of the getter based on camel case style conventions
-	 * assumes the field was already in camelCase TODO: use external library to
-	 * support other cases
-	 * 
-	 * ex: age yields getAge, but TELEPHONE_NUMBER will fail
-	 * 
-	 * @param fieldName
-	 *            the name of the field
-	 * @return the guessed getterName
-	 */
-	private static String getGetterNameForFieldName(String fieldName) {
-		String getterNameForField = new StringBuilder().append("get").append(Character.toUpperCase(fieldName.charAt(0)))
-				.append(fieldName.substring(1)).toString();
-		return getterNameForField;
-	}
+	
 	
 }

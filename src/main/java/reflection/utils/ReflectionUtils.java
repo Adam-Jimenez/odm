@@ -1,6 +1,7 @@
 package reflection.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,5 +103,106 @@ public class ReflectionUtils {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * Guess the name of the getter based on camel case style conventions
+	 * assumes the field was already in camelCase TODO: use external library to
+	 * support other cases
+	 * 
+	 * ex: age yields getAge, but TELEPHONE_NUMBER will fail
+	 * 
+	 * @param fieldName
+	 *            the name of the field
+	 * @return the guessed getterName
+	 */
+	public static String getGetterNameForFieldName(String fieldName) {
+		String getterNameForField = new StringBuilder().append("get").append(Character.toUpperCase(fieldName.charAt(0)))
+				.append(fieldName.substring(1)).toString();
+		return getterNameForField;
+	}
+
+	// TODO: merge this with getGetterNameForFieldName
+	public static String getSetterNameForFieldName(String fieldName) {
+		String getterNameForField = new StringBuilder().append("set").append(Character.toUpperCase(fieldName.charAt(0)))
+				.append(fieldName.substring(1)).toString();
+		return getterNameForField;
+	}
+	
+	/**
+	 * Invokes the given method for the given object and returns the
+	 * value
+	 * 
+	 * @param dataObject
+	 *            The method context
+	 * @param method
+	 *            The method
+	 * @return The value returned from the method
+	 * @throws Exception
+	 */
+	public static Object invokeMethod(Object dataObject, Method method) throws Exception {
+		Object returnValue;
+		returnValue = method.invoke(dataObject);
+		return returnValue;
+	}
+	
+	/**
+	 * Gets the getter
+	 * 
+	 * @param objectClass
+	 *            The class we want to fetch the getter from
+	 * @param getterName
+	 * @return The getter method
+	 * @throws Exception
+	 */
+	public static Method getGetter(Class<?> objectClass, String getterName) throws Exception {
+		Method getterMethod = null;
+		try {
+			getterMethod = objectClass.getDeclaredMethod(getterName);
+
+		} catch (NoSuchMethodException e) {
+			/*
+			 * If we didn't find getter in current class, look into superclasses
+			 * (if they exist)
+			 */
+			if (objectClass.getSuperclass() != null) {
+				getterMethod = getGetter(objectClass.getSuperclass(), getterName);
+			} else {
+				System.err.println(
+						"Oups, the getter " + getterName + " isn't set in class " + objectClass.getCanonicalName());
+				throw new Exception(e);
+			}
+		} catch (SecurityException e) {
+			System.err.println(
+					"Oups, the getter " + getterName + " isn't accessible in class " + objectClass.getCanonicalName());
+			throw new Exception(e);
+		}
+		return getterMethod;
+	}
+	
+	// TODO: merge this with getGetter
+	public static Method getSetter(Class<?> objectClass, String setterName, Class<?> setterType) throws Exception {
+		Method setterMethod = null;
+		try {
+			setterMethod = objectClass.getDeclaredMethod(setterName, setterType);
+
+		} catch (NoSuchMethodException e) {
+			/*
+			 * If we didn't find setter in current class, look into superclasses
+			 * (if they exist)
+			 */
+			if (objectClass.getSuperclass() != null) {
+				setterMethod = getSetter(objectClass.getSuperclass(), setterName, setterType);
+			} else {
+				System.err.println(
+						"Oups, the setter " + setterName + " isn't set in class " + objectClass.getCanonicalName());
+				throw new Exception(e);
+			}
+		} catch (SecurityException e) {
+			System.err.println(
+					"Oups, the setter " + setterName + " isn't accessible in class " + objectClass.getCanonicalName());
+			throw new Exception(e);
+		}
+		return setterMethod;
 	}
 }
