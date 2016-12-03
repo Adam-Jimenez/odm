@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import testUtilities.TestBeanWithArray;
 import testUtilities.TestBeanWithArrayOfObject;
 import testUtilities.TestBeanWithCollectionOfObject;
 import testUtilities.TestBeanWithCollectionOfPrimitive;
+import testUtilities.TestBeanWithMapOfObject;
 import testUtilities.TestBeanWithMapOfPrimitive;
 import testUtilities.TestBeanWithObjectField;
 import testUtilities.TestInheritanceBean;
@@ -155,6 +157,7 @@ public class DaoInsertTest {
 	 * Storing a bean with a map of primitives as field
 	 */
 	@Test
+	@Ignore
 	public void beanWithMapOfPrimitives() {
 		TestBeanWithMapOfPrimitive testBean = new TestBeanWithMapOfPrimitive();
 		Map<String, Integer> map = new HashMap<String, Integer>();
@@ -162,6 +165,30 @@ public class DaoInsertTest {
 		map.put("value10", 10);
 		map.put("value100", 100);
 		testBean.setValues(map);
+		MongoDao.insert(testBean);
+	}
+	
+	/**
+	 * Storing a bean with a map of object as field
+	 */
+	@Test
+	public void beanWithMapOfObjects() {
+		TestBeanWithMapOfObject testBean = new TestBeanWithMapOfObject();
+		Map<Integer, TestSimpleBean> map = new TreeMap<Integer, TestSimpleBean>();
+		TestSimpleBean bean1 = new TestSimpleBean();
+		TestSimpleBean bean2 = new TestSimpleBean();
+		TestSimpleBean bean3 = new TestSimpleBean();
+
+		bean1.setAge(4);
+		bean2.setAge(5);
+		bean3.setAge(6);
+
+		map.put(1, bean1);
+		map.put(2, bean2);
+		map.put(3, bean3);
+		
+		testBean.setValues(map);
+		
 		MongoDao.insert(testBean);
 	}
 }

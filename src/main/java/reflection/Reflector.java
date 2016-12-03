@@ -45,6 +45,9 @@ public class Reflector {
 			String getterName = getGetterNameForFieldName(fieldName);
 			Method getter = getGetter(objectClass, getterName);
 			Object fieldValue = invokeGetter(dataObject, getter);
+			if (fieldValue == null) {
+				continue;
+			}
 			Class<?> fieldClass = fieldValue.getClass();
 			/*
 			 * we can append primitive types and arrays directly to the document
