@@ -54,7 +54,7 @@ public class Instantiator {
 			 */
 			ObjectId id = document.getObjectId("_id");
 			if (id != null) {
-				
+				CachedObjects.addReference(newInstance, id);
 			}
 			return newInstance;
 		} catch (Exception e) {
