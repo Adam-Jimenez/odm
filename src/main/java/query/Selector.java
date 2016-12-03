@@ -13,13 +13,11 @@ import dao.singleton.DbSingleton;
 
 public class Selector {
 
-	private Instantiator instantiatior;
 	private Class<?> classType;
 
 	public Selector(Class<?> returnClassType) {
 		super();
 		this.classType = returnClassType;
-		this.instantiatior = new Instantiator(returnClassType);
 	}
 
 	
@@ -49,7 +47,7 @@ public class Selector {
 			if (document == null) {
 				return null;
 			}
-			return instantiatior.instanciateFromDocument(document);
+			return Instantiator.instantiateFromDocument(document, classType);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -82,7 +80,7 @@ public class Selector {
 			if (documentsIterator == null) {
 				return null;
 			}
-			return instantiatior.instantiateFromDocuments(documentsIterator);
+			return Instantiator.instantiateFromDocuments(documentsIterator, classType);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

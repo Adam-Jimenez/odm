@@ -41,6 +41,7 @@ public class SelectorTest {
 	}
 	
 	@Test
+	@Ignore
 	public void getAllTest() {
 		List<TestSimpleBean> testBeanList = new ArrayList<TestSimpleBean>();
 		TestSimpleBean testBean1 = new TestSimpleBean();
@@ -60,5 +61,18 @@ public class SelectorTest {
 	}
 	
 	@Test
+	public void getBeanWithObjectFieldTest() {
+		TestBeanWithObjectField testBean = new TestBeanWithObjectField();
+		testBean.setName("Paul");
 
+		TestSimpleBean testSimpleBean = new TestSimpleBean();
+		testSimpleBean.setAge(25);
+
+		testBean.setObjectField(testSimpleBean);
+
+		MongoDao.insert(testBean);
+		Selector selector = new Selector(TestBeanWithObjectField.class);
+		TestBeanWithObjectField result = (TestBeanWithObjectField)selector.get(eq("name", "Paul"));
+		assertTrue(result.getObjectField().getAge() == 25);
+	}
 }
