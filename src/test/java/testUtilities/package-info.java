@@ -3,4 +3,4 @@
  * @author adam
  *
  */
-package TestUtilities;
+package testUtilities;

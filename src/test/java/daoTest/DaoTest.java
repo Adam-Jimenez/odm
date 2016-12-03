@@ -7,8 +7,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import TestUtilities.TestBean;
 import dao.MongoDao;
+import testUtilities.TestBeanWithArray;
+import testUtilities.TestBeanWithObjectField;
+import testUtilities.TestSimpleBean;
 
 public class DaoTest {
 
@@ -20,12 +22,45 @@ public class DaoTest {
 	public void tearDown() throws Exception {
 	}
 
+	/**
+	 * Storing simple bean
+	 */
 	@Test
-	public void test(){
-		TestBean testBean = new TestBean();
-		testBean.setAge(1);
+	@Ignore
+	public void simpleBeanTest(){
+		TestSimpleBean testBean = new TestSimpleBean();
+		testBean.setAge(10);
 
-		MongoDao.store(testBean);
+		MongoDao.insert(testBean);
+	}
+	
+	/**
+	 * Storing bean with sub object field to test recursive calling
+	 */
+	@Test
+	@Ignore
+	public void beanWithSubObjectTest() {
+		TestBeanWithObjectField testBean = new TestBeanWithObjectField();
+		testBean.setName("Paul");
+
+		TestSimpleBean testSimpleBean = new TestSimpleBean();
+		testSimpleBean.setAge(25);
+		
+		testBean.setObjectField(testSimpleBean);
+		
+		MongoDao.insert(testBean);
+	}
+	
+	/**
+	 * Storing bean with an array of primitives (int)
+	 */
+	@Test
+	public void beanWithArray() {
+		TestBeanWithArray testBean = new TestBeanWithArray();
+		Integer[] numbers = { 1, 2, 3, 4 };
+		testBean.setNumbers(numbers);
+		
+		MongoDao.insert(testBean);
 	}
 	
 }

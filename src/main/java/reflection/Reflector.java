@@ -2,8 +2,12 @@ package reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bson.Document;
+
+import reflection.utils.ReflectionUtils;
 
 public class Reflector {
 	/**
@@ -29,7 +33,20 @@ public class Reflector {
 			String getterName = getGetterNameForFieldName(fieldName);
 			Method getter = getGetter(objectClass, getterName);
 			Object fieldValue = invokeGetter(dataObject, getter);
-			document.append(fieldName, fieldValue);
+			/*
+			 *  we can append primitive types and arrays directly to the document
+			 *  otherwise we need to do a recursive call
+			 *  TODO: extract the following into a recursive function
+			 */
+			if (ReflectionUtils.isPrimitive(fieldValue.getClass())) {
+				document.append(fieldName, fieldValue);
+			} else if (ReflectionUtils.isPrimitiveArray(fieldValue.getClass())) {
+				Object[] primitiveValues = (Object[]) fieldValue;
+				List<Object> primitiveList = Arrays.asList(primitiveValues);
+				document.append(fieldName, primitiveList);
+			} else {
+				document.append(fieldName, documentFromObject(fieldValue));
+			}
 		}
 
 		return document;
@@ -61,11 +78,11 @@ public class Reflector {
 			getterMethod = objectClass.getDeclaredMethod(getterName);
 		} catch (NoSuchMethodException e) {
 			System.err.println("Oups, the getter " + getterName +
-					"isn't set in class " + objectClass.getCanonicalName());
+					" isn't set in class " + objectClass.getCanonicalName());
 			throw new Exception(e);
 		} catch (SecurityException e) {
 			System.err.println("Oups, the getter " + getterName + 
-					"isn't accessible in class " + objectClass.getCanonicalName());
+					" isn't accessible in class " + objectClass.getCanonicalName());
 			throw new Exception(e);
 		}
 		return getterMethod;

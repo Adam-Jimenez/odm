@@ -10,10 +10,10 @@ import org.junit.Test;
 
 import com.mongodb.client.MongoCollection;
 
-import TestUtilities.TestBean;
 import dao.exceptions.DbNotFound;
 import dao.singleton.DbSingleton;
 import reflection.Reflector;
+import testUtilities.TestSimpleBean;
 
 public class ReflectorTest {
 
@@ -35,7 +35,7 @@ public class ReflectorTest {
 	public void test() throws DbNotFound {
 		MongoCollection<Document> collection = DbSingleton.getDefaultDB().getCollection("testCollection");
 
-		TestBean testBean = new TestBean();
+		TestSimpleBean testBean = new TestSimpleBean();
 		testBean.setAge(1);
 
 		/*
@@ -67,7 +67,7 @@ public class ReflectorTest {
 	public void testReflection() throws Exception {
 		MongoCollection<Document> collection = DbSingleton.getDefaultDB().getCollection("testCollection");
 
-		TestBean testBean = new TestBean();
+		TestSimpleBean testBean = new TestSimpleBean();
 		testBean.setAge(1);
 
 		Document document = Reflector.documentFromObject(testBean);

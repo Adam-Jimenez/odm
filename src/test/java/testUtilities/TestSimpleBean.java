@@ -1,6 +1,6 @@
-package TestUtilities;
+package testUtilities;
 
-public class TestBean {
+public class TestSimpleBean {
 	private int age;
 	
 	public int getAge() {
