@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import dao.MongoDao;
 import testUtilities.TestBeanWithArray;
+import testUtilities.TestBeanWithArrayOfObject;
 import testUtilities.TestBeanWithObjectField;
 import testUtilities.TestSimpleBean;
 
@@ -52,7 +53,8 @@ public class DaoTest {
 	}
 	
 	/**
-	 * Storing bean with an array of primitives (int)
+	 * Storing bean with an array of primitives (Integer)
+	 * NOTE LIMITATIONS: Integer is used here, because int fails
 	 */
 	@Test
 	public void beanWithArray() {
@@ -62,5 +64,20 @@ public class DaoTest {
 		
 		MongoDao.insert(testBean);
 	}
+	
+	/**
+	 * Storing bean with an array of objects (SimpleBean)
+	 */
+	@Test
+	public void beanWithArrayOfObject() {
+		TestBeanWithArrayOfObject testBean = new TestBeanWithArrayOfObject();
+		TestSimpleBean[] beans = new TestSimpleBean[3];
+		(beans[0] = new TestSimpleBean()).setAge(2);
+		(beans[1] = new TestSimpleBean()).setAge(4);
+		(beans[2] = new TestSimpleBean()).setAge(6);
+		testBean.setBeans(beans);
+		
+		MongoDao.insert(testBean);
+	}	
 	
 }

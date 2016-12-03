@@ -2,6 +2,7 @@ package reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,25 +34,54 @@ public class Reflector {
 			String getterName = getGetterNameForFieldName(fieldName);
 			Method getter = getGetter(objectClass, getterName);
 			Object fieldValue = invokeGetter(dataObject, getter);
+			Class<?> fieldClass = fieldValue.getClass();
 			/*
 			 *  we can append primitive types and arrays directly to the document
 			 *  otherwise we need to do a recursive call
 			 *  TODO: extract the following into a recursive function
 			 */
-			if (ReflectionUtils.isPrimitive(fieldValue.getClass())) {
+			if (ReflectionUtils.isPrimitive(fieldClass)) {
 				document.append(fieldName, fieldValue);
-			} else if (ReflectionUtils.isPrimitiveArray(fieldValue.getClass())) {
-				Object[] primitiveValues = (Object[]) fieldValue;
-				List<Object> primitiveList = Arrays.asList(primitiveValues);
-				document.append(fieldName, primitiveList);
+			} else if (fieldClass.isArray()) {
+				/*
+				 * Although, mongo-db-driver takes lists 
+				 * instead of array so we need to convert
+				 */
+				Object[] fieldComponentValues = (Object[]) fieldValue;
+				if (ReflectionUtils.isPrimitiveArray(fieldClass)) {
+					List<Object> primitiveList = Arrays.asList(fieldComponentValues);
+					document.append(fieldName, primitiveList);
+				} else {
+				/*
+				 * If we have array of unknown type, convert that type to Document through more reflexion
+				 */
+					document.append(fieldName, documentsFromObjectArray(fieldComponentValues));
+				}
 			} else {
 				document.append(fieldName, documentFromObject(fieldValue));
 			}
 		}
-
 		return document;
 	}
-
+	
+	/**
+	 * Companion recursive function to documentFromObject, except it treats arrays of objects
+	 * @param fieldComponentValues The array of object values expected to be extract from documentFromObject
+	 * where the array was a field of a given object
+	 * @return A list of documents to be appended in a document
+	 */
+	public static List<Document> documentsFromObjectArray(Object[] fieldComponentValues) {
+		List<Document> documentsFromObjectArray = new ArrayList<Document>();
+		for (Object object : fieldComponentValues) {
+			try {
+				Document document = documentFromObject(object);
+				documentsFromObjectArray.add(document);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return documentsFromObjectArray;
+	}
 	/**
 	 * Invokes the given getter method for the given object and returns the value
 	 * @param dataObject The object to get from
