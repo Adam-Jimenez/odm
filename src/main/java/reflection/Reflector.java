@@ -99,21 +99,27 @@ public class Reflector {
 				 *  Set of entries
 				 */
 				Set<?> mapEntries =  ((Map<?, ?>)fieldValue).entrySet();
+				/*
+				 * Here we get both the types for the key and the values of the map
+				 * NOTE: the key must be primitive
+				 */
 				Type genericKeyType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];
 				Type genericValueType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[1];
 				Class<?> classOfKey = Class.forName(genericKeyType.getTypeName());
 				Class<?> classOfValue = Class.forName(genericValueType.getTypeName());
-				/*
-				 * The key of the map needs to be a primitive type to be inserted in the db
-				 */
+
 				if (!ReflectionUtils.isPrimitive(classOfKey)) {
 					throw new Exception("Oups, tried to use object as key for field " + field.getName());
 				}
+				/*
+				 * We iterate over the entries of the map and create a document
+				 * that we will append to the main document
+				 */
 				Document mapSubDocument = new Document();
 				for(Object entryObject: mapEntries) {
 					Entry<?, ?> entry = (Entry<?, ?>) entryObject;
 					/*
-					 * Is value is primitive, append directly, else recursive call
+					 * If value is primitive, append directly, else recursive call
 					 */
 					if (ReflectionUtils.isPrimitive(classOfValue)) {
 						mapSubDocument.append(String.valueOf(entry.getKey()), entry.getValue());
