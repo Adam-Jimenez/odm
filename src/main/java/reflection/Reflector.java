@@ -16,8 +16,8 @@ import reflection.utils.ReflectionUtils;
 public class Reflector {
 
 	/**
-	 * Takes an object and parses the field it contains, gets their value and
-	 * builds a document with it
+	 * Takes an object and parses the fields it contains, gets their value and
+	 * builds a MongoDb document with it
 	 * 
 	 * This assume the given class isn't a private inner class in the following
 	 * case a field is added by default, $this0 and from this may result
@@ -45,8 +45,7 @@ public class Reflector {
 			Class<?> fieldClass = fieldValue.getClass();
 			/*
 			 * we can append primitive types and arrays directly to the document
-			 * otherwise we need to do a recursive call TODO: extract the
-			 * following into a recursive function
+			 * otherwise we need to do a recursive call 
 			 */
 			if (ReflectionUtils.isPrimitive(fieldClass)) {
 				document.append(fieldName, fieldValue);
@@ -54,7 +53,7 @@ public class Reflector {
 
 				/*
 				 * Note: this line will fail with an array of primitive type eg:
-				 * int, boolean, etc. use wrapper objects: Integer, Boolean,
+				 * int, boolean, etc. Use wrapper objects instead: Integer, Boolean,
 				 * etc.
 				 */
 				Object[] fieldComponentValues = (Object[]) fieldValue;
@@ -77,7 +76,7 @@ public class Reflector {
 				Object[] fieldComponentValues = ((Collection<?>) fieldValue).toArray();
 				/*
 				 * This lines gets which generic value is used in the collection above
-				 * getActualTypeArguments return the array of generics used, in our case,
+				 * getActualTypeArguments return an array of generics types used, in our case,
 				 * only one is used, so we can access index 0 directly
 				 */
 				Type genericType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];

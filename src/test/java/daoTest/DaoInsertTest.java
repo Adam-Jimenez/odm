@@ -13,12 +13,13 @@ import org.junit.Test;
 import dao.MongoDao;
 import testUtilities.TestBeanWithArray;
 import testUtilities.TestBeanWithArrayOfObject;
+import testUtilities.TestBeanWithCollectionOfObject;
 import testUtilities.TestBeanWithCollectionOfPrimitive;
 import testUtilities.TestBeanWithObjectField;
 import testUtilities.TestInheritanceBean;
 import testUtilities.TestSimpleBean;
 
-public class DaoTest {
+public class DaoInsertTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -87,6 +88,9 @@ public class DaoTest {
 		MongoDao.insert(testBean);
 	}	
 	
+	/**
+	 * Storing a bean that inherits from another
+	 */
 	@Test
 	@Ignore
 	public void beanWithInheritanceTest() {
@@ -103,8 +107,12 @@ public class DaoTest {
 		MongoDao.insert(testBean);
 	}
 	
+	/**
+	 * Storing a bean with a collection of primitives types as field
+	 */
 	@Test
-	public void beanWithCollectionTest() {
+	@Ignore
+	public void beanWithCollectionOfPrimitiveTest() {
 		TestBeanWithCollectionOfPrimitive testBean = new TestBeanWithCollectionOfPrimitive();
 		List<Integer> listOfNumbers = new ArrayList<Integer>();
 		listOfNumbers.add(1);
@@ -112,6 +120,30 @@ public class DaoTest {
 		listOfNumbers.add(3);
 
 		testBean.setListOfNumbers(listOfNumbers);
+		MongoDao.insert(testBean);
+	}
+	
+	/**
+	 * Storing a bean with a collection of objects as field
+	 */
+	@Test
+	public void beanWithCollectionOfObject() {
+		TestBeanWithCollectionOfObject testBean = new TestBeanWithCollectionOfObject();
+		List<TestSimpleBean> beans = new ArrayList<TestSimpleBean>();
+
+		TestSimpleBean bean1 = new TestSimpleBean();
+		TestSimpleBean bean2 = new TestSimpleBean();
+		TestSimpleBean bean3 = new TestSimpleBean();
+
+		bean1.setAge(4);
+		bean2.setAge(5);
+		bean3.setAge(6);
+
+		beans.add(bean1);
+		beans.add(bean2);
+		beans.add(bean3);
+		
+		testBean.setBeans(beans);
 		MongoDao.insert(testBean);
 	}
 }
