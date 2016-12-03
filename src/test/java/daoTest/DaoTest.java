@@ -2,6 +2,9 @@ package daoTest;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -10,6 +13,7 @@ import org.junit.Test;
 import dao.MongoDao;
 import testUtilities.TestBeanWithArray;
 import testUtilities.TestBeanWithArrayOfObject;
+import testUtilities.TestBeanWithCollectionOfPrimitive;
 import testUtilities.TestBeanWithObjectField;
 import testUtilities.TestInheritanceBean;
 import testUtilities.TestSimpleBean;
@@ -84,6 +88,7 @@ public class DaoTest {
 	}	
 	
 	@Test
+	@Ignore
 	public void beanWithInheritanceTest() {
 		TestInheritanceBean testBean = new TestInheritanceBean();
 		testBean.setAge(50);
@@ -95,6 +100,18 @@ public class DaoTest {
 		testBean.setL(100000000000l);
 		testBean.setS((short) 30000);
 		
+		MongoDao.insert(testBean);
+	}
+	
+	@Test
+	public void beanWithCollectionTest() {
+		TestBeanWithCollectionOfPrimitive testBean = new TestBeanWithCollectionOfPrimitive();
+		List<Integer> listOfNumbers = new ArrayList<Integer>();
+		listOfNumbers.add(1);
+		listOfNumbers.add(2);
+		listOfNumbers.add(3);
+
+		testBean.setListOfNumbers(listOfNumbers);
 		MongoDao.insert(testBean);
 	}
 }

@@ -2,8 +2,11 @@ package reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.bson.Document;
@@ -55,6 +58,7 @@ public class Reflector {
 				 * etc.
 				 */
 				Object[] fieldComponentValues = (Object[]) fieldValue;
+				
 				if (ReflectionUtils.isPrimitiveArray(fieldClass)) {
 					/*
 					 * Document.append takes lists instead of array so we need
@@ -67,6 +71,23 @@ public class Reflector {
 					 * If we have array of unknown type, convert that type to
 					 * Document through more reflection!
 					 */
+					document.append(fieldName, documentsFromObjectArray(fieldComponentValues));
+				}
+			} else if (fieldValue instanceof Collection<?>) {
+				Object[] fieldComponentValues = ((Collection<?>) fieldValue).toArray();
+				/*
+				 * This lines gets which generic value is used in the collection above
+				 */
+				Type genericType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];
+				Class<?> classOfGeneric = Class.forName(genericType.getTypeName());
+
+				/*
+				 * The following code is duplicate with the one above, i'll fix it one day 
+				 */
+				if (ReflectionUtils.isPrimitive(classOfGeneric)) {
+					List<Object> primitiveList = Arrays.asList(fieldComponentValues);
+					document.append(fieldName, primitiveList);
+				} else {
 					document.append(fieldName, documentsFromObjectArray(fieldComponentValues));
 				}
 			} else {

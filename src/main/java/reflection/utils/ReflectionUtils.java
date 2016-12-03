@@ -1,7 +1,7 @@
 package reflection.utils;
 
 import java.lang.reflect.Field;
-
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -47,6 +47,8 @@ public class ReflectionUtils {
 	}
 	/**
 	 * Returns all fields that were directly declared or inherited for a class
+	 * NOTE: breaks iteration if the extended class is a primitive, we don't want to inherit that junk
+	 * NOTE: ignores static fields
 	 * @param objectClass The class
 	 * @return List of fields
 	 */
@@ -54,9 +56,13 @@ public class ReflectionUtils {
 		List<Field> fieldsInObject = new ArrayList<Field>();
 		do {
 			Field[] currentClassLevelFields = objectClass.getDeclaredFields();
-			fieldsInObject.addAll(Arrays.asList(currentClassLevelFields));
+			for ( Field field : currentClassLevelFields) {
+				if (!Modifier.isStatic(field.getModifiers())) {
+					fieldsInObject.add(field);
+			    }	
+			}
 			objectClass = objectClass.getSuperclass();
-		} while (objectClass != null);
+		} while (objectClass != null && !isPrimitive(objectClass));
 		return fieldsInObject;
 	}
 }
