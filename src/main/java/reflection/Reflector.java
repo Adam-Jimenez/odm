@@ -77,13 +77,12 @@ public class Reflector {
 				Object[] fieldComponentValues = ((Collection<?>) fieldValue).toArray();
 				/*
 				 * This lines gets which generic value is used in the collection above
+				 * getActualTypeArguments return the array of generics used, in our case,
+				 * only one is used, so we can access index 0 directly
 				 */
 				Type genericType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];
 				Class<?> classOfGeneric = Class.forName(genericType.getTypeName());
 
-				/*
-				 * The following code is duplicate with the one above, i'll fix it one day 
-				 */
 				if (ReflectionUtils.isPrimitive(classOfGeneric)) {
 					List<Object> primitiveList = Arrays.asList(fieldComponentValues);
 					document.append(fieldName, primitiveList);
