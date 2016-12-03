@@ -11,6 +11,7 @@ import dao.MongoDao;
 import testUtilities.TestBeanWithArray;
 import testUtilities.TestBeanWithArrayOfObject;
 import testUtilities.TestBeanWithObjectField;
+import testUtilities.TestInheritanceBean;
 import testUtilities.TestSimpleBean;
 
 public class DaoTest {
@@ -57,7 +58,8 @@ public class DaoTest {
 	 * NOTE LIMITATIONS: Integer is used here, because int fails
 	 */
 	@Test
-	public void beanWithArray() {
+	@Ignore
+	public void beanWithArrayTest() {
 		TestBeanWithArray testBean = new TestBeanWithArray();
 		Integer[] numbers = { 1, 2, 3, 4 };
 		testBean.setNumbers(numbers);
@@ -69,7 +71,8 @@ public class DaoTest {
 	 * Storing bean with an array of objects (SimpleBean)
 	 */
 	@Test
-	public void beanWithArrayOfObject() {
+	@Ignore
+	public void beanWithArrayOfObjectTest() {
 		TestBeanWithArrayOfObject testBean = new TestBeanWithArrayOfObject();
 		TestSimpleBean[] beans = new TestSimpleBean[3];
 		(beans[0] = new TestSimpleBean()).setAge(2);
@@ -80,4 +83,18 @@ public class DaoTest {
 		MongoDao.insert(testBean);
 	}	
 	
+	@Test
+	public void beanWithInheritanceTest() {
+		TestInheritanceBean testBean = new TestInheritanceBean();
+		testBean.setAge(50);
+		testBean.setBool(true);
+		testBean.setByt((byte) 127);
+		testBean.setC('k');
+		testBean.setD(4.20);
+		testBean.setF(3.14f);
+		testBean.setL(100000000000l);
+		testBean.setS((short) 30000);
+		
+		MongoDao.insert(testBean);
+	}
 }

@@ -1,6 +1,11 @@
 package reflection.utils;
 
+import java.lang.reflect.Field;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ReflectionUtils {
@@ -38,7 +43,20 @@ public class ReflectionUtils {
 		primitives.add(Float.class);
 		primitives.add(Double.class);
 		primitives.add(String.class);
-		primitives.add(Void.class);
 		return primitives;
+	}
+	/**
+	 * Returns all fields that were directly declared or inherited for a class
+	 * @param objectClass The class
+	 * @return List of fields
+	 */
+	public static List<Field> getInheritedFields(Class<?> objectClass) {
+		List<Field> fieldsInObject = new ArrayList<Field>();
+		do {
+			Field[] currentClassLevelFields = objectClass.getDeclaredFields();
+			fieldsInObject.addAll(Arrays.asList(currentClassLevelFields));
+			objectClass = objectClass.getSuperclass();
+		} while (objectClass != null);
+		return fieldsInObject;
 	}
 }
