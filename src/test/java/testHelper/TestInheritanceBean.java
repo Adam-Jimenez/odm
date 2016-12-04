@@ -1,4 +1,4 @@
-package testUtilities;
+package testHelper;
 
 public class TestInheritanceBean extends TestSimpleBean {
 	private Character c;

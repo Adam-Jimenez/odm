@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dao.MongoDao;
-import testUtilities.TestSimpleBean;
+import testHelper.TestSimpleBean;
 
 public class DaoDeleteTest {
 

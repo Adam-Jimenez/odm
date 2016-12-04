@@ -1,4 +1,4 @@
-package testUtilities;
+package testHelper;
 
 import java.util.List;
 

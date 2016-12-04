@@ -1,4 +1,4 @@
-package testUtilities;
+package testHelper;
 
 public class TestBeanWithArray {
 	private Integer[] numbers;

@@ -13,7 +13,7 @@ import org.junit.Test;
 import dao.MongoDao;
 import dao.singleton.CachedObjects;
 import query.Selector;
-import testUtilities.TestSimpleBean;
+import testHelper.TestSimpleBean;
 
 public class DaoUpdateTest {
 

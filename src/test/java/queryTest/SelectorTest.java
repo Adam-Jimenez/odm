@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;
-import testUtilities.*;
 
 import query.Selector;
 import query.utils.QueryUtils;
+import testHelper.*;
 
 import org.junit.After;
 import org.junit.Before;

@@ -14,16 +14,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import dao.MongoDao;
-import testUtilities.TestBeanWithArray;
-import testUtilities.TestBeanWithArrayOfObject;
-import testUtilities.TestBeanWithCollectionOfObject;
-import testUtilities.TestBeanWithCollectionOfPrimitive;
-import testUtilities.TestBeanWithEverything;
-import testUtilities.TestBeanWithMapOfObject;
-import testUtilities.TestBeanWithMapOfPrimitive;
-import testUtilities.TestBeanWithObjectField;
-import testUtilities.TestInheritanceBean;
-import testUtilities.TestSimpleBean;
+import testHelper.TestBeanWithArray;
+import testHelper.TestBeanWithArrayOfObject;
+import testHelper.TestBeanWithCollectionOfObject;
+import testHelper.TestBeanWithCollectionOfPrimitive;
+import testHelper.TestBeanWithEverything;
+import testHelper.TestBeanWithMapOfObject;
+import testHelper.TestBeanWithMapOfPrimitive;
+import testHelper.TestBeanWithObjectField;
+import testHelper.TestInheritanceBean;
+import testHelper.TestSimpleBean;
 
 public class DaoInsertTest {
 
@@ -198,6 +198,7 @@ public class DaoInsertTest {
 	 * Now storing a bean that uses all previous concepts
 	 */
 	@Test
+	@Ignore
 	public void beanWithEverythingTest() {
 		TestBeanWithEverything testBean = new TestBeanWithEverything();
 		Long alonglong = 1234567890987654321l;
