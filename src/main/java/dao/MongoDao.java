@@ -1,15 +1,13 @@
 package dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 
 import dao.singleton.CachedObjects;
 import dao.singleton.DbSingleton;
@@ -97,5 +95,39 @@ public class MongoDao {
 			update(object);
 		}
 		
+	}
+	
+	public static void delete(Object dataObject) {
+		if (dataObject == null || !CachedObjects.hasReference(dataObject)) {
+			return;
+		}
+
+		String collectionNameFromObjectClass = dataObject.getClass().getCanonicalName();
+
+		try {
+			ObjectId id = CachedObjects.getReference(dataObject);
+			// fetch collection
+			MongoCollection<Document> collection = DbSingleton.getDefaultDB()
+					.getCollection(collectionNameFromObjectClass);
+
+			// delete object
+			collection.deleteOne(Filters.eq("_id", id));
+
+			CachedObjects.removeReference(dataObject);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("=================================");
+			System.err.println("Error message: " + e.getMessage());
+		}
+	}
+	
+	public static void deleteAll(List<?> dataObjects) {
+		if(dataObjects==null || dataObjects.size() < 1) {
+			return;
+		}
+
+		for(Object object : dataObjects) {
+			delete(object);
+		}
 	}
 }
