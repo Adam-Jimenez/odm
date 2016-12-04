@@ -1,4 +1,4 @@
-package query;
+package dao.singleton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,10 @@ public final class CachedObjects {
 	
 	public static void addReference(Object object, ObjectId id) {
 		getInstance().put(object, id);
+	}
+	
+	public static void addAllReference(Map<Object, ObjectId> map) {
+		getInstance().putAll(map);
 	}
 	
 	public static boolean hasReference(Object object) {

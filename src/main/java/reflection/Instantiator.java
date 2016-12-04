@@ -1,4 +1,4 @@
-package query;
+package reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoCursor;
 
+import dao.singleton.CachedObjects;
 import reflection.utils.ReflectionUtils;
 
 public class Instantiator {
@@ -71,6 +72,13 @@ public class Instantiator {
 		while (cursor.hasNext()) {
 			Document document = cursor.next();
 			Object newInstance = instantiateFromDocument(document, returnClassType);
+			/*
+			 * map object reference to its ObjectId and cache it for updates/deletes
+			 */
+			ObjectId id = document.getObjectId("_id");
+			if (id != null) {
+				CachedObjects.addReference(newInstance, id);
+			}
 			resultingInstances.add(newInstance);
 	    }
 		return resultingInstances.toArray(new Object[resultingInstances.size()]);

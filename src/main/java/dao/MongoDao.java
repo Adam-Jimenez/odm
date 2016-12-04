@@ -1,6 +1,9 @@
 package dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -8,8 +11,8 @@ import org.bson.types.ObjectId;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 
+import dao.singleton.CachedObjects;
 import dao.singleton.DbSingleton;
-import query.CachedObjects;
 import reflection.Reflector;
 
 public class MongoDao {
@@ -41,30 +44,13 @@ public class MongoDao {
 		}
 	}
 
-	public static void insertMany(List<?> dataObject) {
-		if (dataObject.size() < 1) {
+	public static void insertMany(List<?> dataObjects) {
+		if (dataObjects == null || dataObjects.size() < 1) {
 			return;
 		}
-		/*
-		 * Assume all objects in list are same type
-		 */
-		String collectionNameFromObjectClass = dataObject.get(0).getClass().getCanonicalName();
-		/*
-		 * get the collection of the same name as the class as the object (we
-		 * store all instances of the same class in the same collection)
-		 */
-		try {
-			// transform object into document
-			List<Document> documents = Reflector.documentsFromObjectArray(dataObject.toArray());
-			// fetch collection
-			MongoCollection<Document> collection = DbSingleton.getDefaultDB()
-					.getCollection(collectionNameFromObjectClass);
-			// and insert it document in collection
-			collection.insertMany(documents);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("=================================");
-			System.err.println("Error message: " + e.getMessage());
+		
+		for(Object object : dataObjects) {
+			insert(object);
 		}
 	}
 
@@ -100,5 +86,16 @@ public class MongoDao {
 			System.err.println("=================================");
 			System.err.println("Error message: " + e.getMessage());
 		}
+	}
+	
+	public static void updateAll(List<?> dataObjects) {
+		if (dataObjects == null || dataObjects.size() < 0 ) {
+			return;
+		}
+		
+		for(Object object : dataObjects) {
+			update(object);
+		}
+		
 	}
 }

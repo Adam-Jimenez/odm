@@ -1,15 +1,12 @@
 package query;
 
-import java.util.List;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
-
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
 import dao.singleton.DbSingleton;
+import reflection.Instantiator;
 
 public class Selector {
 
@@ -47,7 +44,9 @@ public class Selector {
 			if (document == null) {
 				return null;
 			}
-			return Instantiator.instantiateFromDocument(document, classType);
+			
+			Object newInstance = Instantiator.instantiateFromDocument(document, classType);
+			return newInstance;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
