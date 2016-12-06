@@ -1,9 +1,17 @@
 package daoTest;
+
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import com.mongodb.client.model.Filters;
+
+import core.ODM;
+import query.Selector;
+import testHelper.TestSimpleBean;
 
 public class ODMTest {
 
@@ -16,8 +24,10 @@ public class ODMTest {
 	}
 
 	@Test
+	@Ignore
 	public void test() {
-		fail("Not yet implemented");
+		Selector selector = ODM.selectorForClass(TestSimpleBean.class);
+		TestSimpleBean bean = (TestSimpleBean) selector.get(Filters.eq("id", "0"));
 	}
 
 }
