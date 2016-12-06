@@ -1,7 +1,10 @@
 package reflection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,9 +13,11 @@ import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 
 import dao.singleton.CachedObjects;
+import query.utils.QueryUtils;
 import reflection.utils.ReflectionUtils;
 
 public class Instantiator {
@@ -48,7 +53,18 @@ public class Instantiator {
 						/*
 						 * Convert fieldValue to list and set it
 						 */
-						setter.invoke(newInstance, Arrays.asList(((Collection<?>) fieldValue).toArray()));
+						Object[] values = ((Collection<?>) fieldValue).toArray();
+						if (ReflectionUtils.isPrimitiveArray(values.getClass())) {
+							setter.invoke(newInstance, Arrays.asList(values));
+						} else {
+							/*
+							 * array of subobjects
+							 */
+							Document[] documents = QueryUtils.castResult(values, Document[].class);
+							Type genericType = (((ParameterizedType)field.getGenericType()).getActualTypeArguments())[0];
+							Class<?> classOfGeneric = Class.forName(genericType.getTypeName());
+							setter.invoke(newInstance, Arrays.asList(instantiateFromDocuments(documents, classOfGeneric)));
+						}
 					} else {
 						/*
 						 * if field is object (document), load it recursively
@@ -78,6 +94,22 @@ public class Instantiator {
 		List<Object> resultingInstances = new ArrayList<Object>();
 		while (cursor.hasNext()) {
 			Document document = cursor.next();
+			Object newInstance = instantiateFromDocument(document, returnClassType);
+			/*
+			 * map object reference to its ObjectId and cache it for updates/deletes
+			 */
+			ObjectId id = document.getObjectId("_id");
+			if (id != null) {
+				CachedObjects.addReference(newInstance, id);
+			}
+			resultingInstances.add(newInstance);
+	    }
+		return resultingInstances.toArray(new Object[resultingInstances.size()]);
+	}
+	
+	public static Object[] instantiateFromDocuments(Document[] documents, Class<?> returnClassType) {
+		List<Object> resultingInstances = new ArrayList<Object>();
+		for(Document document : documents) {
 			Object newInstance = instantiateFromDocument(document, returnClassType);
 			/*
 			 * map object reference to its ObjectId and cache it for updates/deletes

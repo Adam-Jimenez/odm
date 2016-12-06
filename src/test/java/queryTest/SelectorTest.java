@@ -95,4 +95,31 @@ public class SelectorTest {
 			System.out.println(number);
 		}
 	}
+	
+	@Test
+	@Ignore
+	public void beanWithCollectionOfObjectTest() {
+		TestBeanWithCollectionOfObject testBean = new TestBeanWithCollectionOfObject();
+		List<TestSimpleBean> beans = new ArrayList<TestSimpleBean>();
+
+		TestSimpleBean bean1 = new TestSimpleBean();
+		TestSimpleBean bean2 = new TestSimpleBean();
+		TestSimpleBean bean3 = new TestSimpleBean();
+
+		bean1.setAge(4);
+		bean2.setAge(5);
+		bean3.setAge(6);
+
+		beans.add(bean1);
+		beans.add(bean2);
+		beans.add(bean3);
+
+		testBean.setBeans(beans);
+		MongoDao.insert(testBean);
+
+		Selector selector = new Selector(TestBeanWithCollectionOfObject.class);
+		TestBeanWithCollectionOfObject result = (TestBeanWithCollectionOfObject)selector.get();
+		System.out.println(Arrays.toString(result.getBeans().toArray()));
+	}
+	
 }
