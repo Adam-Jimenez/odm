@@ -35,6 +35,7 @@ public class DaoUpdateTest {
 		testBean.setAge(60); 
 		MongoDao.insert(testBean);
 
+		// ADD BREAKPOINT
 		testBean.setAge(55);
 		MongoDao.update(testBean);
 	}
@@ -50,6 +51,7 @@ public class DaoUpdateTest {
 	}
 	
 	@Test
+	@Ignore
 	public void updateAllTest() {
 		List<TestSimpleBean> testBeanList = new ArrayList<TestSimpleBean>();
 		TestSimpleBean testBean1 = new TestSimpleBean();
@@ -64,6 +66,7 @@ public class DaoUpdateTest {
 		
 		MongoDao.insertMany(testBeanList);		
 		
+		// ADD BREAKPOINT
 		testBean1.setAge(11);
 		testBean2.setAge(22);
 		testBean3.setAge(33);

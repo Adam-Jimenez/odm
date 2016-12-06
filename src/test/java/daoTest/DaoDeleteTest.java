@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dao.MongoDao;
@@ -20,6 +21,7 @@ public class DaoDeleteTest {
 	}
 
 	@Test
+	@Ignore
 	public void deleteTest() {
 		TestSimpleBean testBean = new TestSimpleBean();
 		testBean.setAge(123);

@@ -24,6 +24,9 @@ public class Instantiator {
 
 	/**
 	 * Create an object instance from a document
+	 * NOTE: the logic of this looks a lot like the one in reflector
+	 * though i can't figure out how to reuse it
+	 * 
 	 * @param document Document containing object data
 	 * @return New object instance
 	 */
