@@ -30,6 +30,12 @@ public class ODM {
 	public static void deleteAll(List<?> dataObjects) {
 		MongoDao.deleteAll(dataObjects);
 	}
+	/**
+	 * Used to cast result array from selector.getAll
+	 * @param original Result
+	 * @param newType Type to cast to
+	 * @return
+	 */
 	public static <T, U> T[] castResult(U[] original, Class<? extends T[]> newType) {
 		return QueryUtils.castResult(original, newType);
 	}
