@@ -3,6 +3,8 @@ package reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.bson.Document;
@@ -42,6 +44,11 @@ public class Instantiator {
 					
 					if (ReflectionUtils.isPrimitive(fieldValue.getClass())) {
 						setter.invoke(newInstance, fieldValue);
+					} else if(fieldValue instanceof Collection<?>){
+						/*
+						 * Convert fieldValue to list and set it
+						 */
+						setter.invoke(newInstance, Arrays.asList(((Collection<?>) fieldValue).toArray()));
 					} else {
 						/*
 						 * if field is object (document), load it recursively
